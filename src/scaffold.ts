@@ -8,6 +8,7 @@ import { render } from './render.js'
 import { toVars } from './vars.js'
 
 export const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
+const templateDir = join(packageRoot, 'template')
 
 // npm strips .gitignore from published tarballs, so the template ships it without the dot.
 const renames: Record<string, string> = { gitignore: '.gitignore' }
@@ -25,16 +26,36 @@ async function* walk(dir: string): AsyncGenerator<string> {
   }
 }
 
+/** Template files as [source, path in the project]. */
+export async function templateFiles(): Promise<[string, string][]> {
+  const files: [string, string][] = []
+  for await (const file of walk(templateDir)) {
+    const rel = relative(templateDir, file)
+    const name = renames[rel.split('/').pop() ?? '']
+    files.push([file, name ? join(dirname(rel), name) : rel])
+  }
+  return files
+}
+
+export function stackFiles(stack: Stack): [string, string][] {
+  const stackDir = join(packageRoot, 'stacks', stack)
+  return [
+    [join(stackDir, 'mise.toml'), 'mise.toml'],
+    [join(stackDir, 'README.md'), 'docs/stack.md'],
+    [join(packageRoot, 'stacks', 'auth.md'), 'docs/auth.md'],
+  ]
+}
+
 export async function stackSummary(stack: Stack): Promise<string> {
   const readme = await readFile(join(packageRoot, 'stacks', stack, 'README.md'), 'utf8')
   return readme.split('\n').find((line) => line.trim() && !line.startsWith('#')) ?? ''
 }
 
 export async function scaffold(a: Answers): Promise<Written[]> {
-  const vars = toVars(a, await stackSummary(a.stack))
+  const vars = toVars(a, a.stack && (await stackSummary(a.stack.stack)))
   const written: Written[] = []
 
-  const place = async (source: string, dest: string) => {
+  const place = async ([source, dest]: [string, string]) => {
     const target = join(a.dir, dest)
     if (existsSync(target)) return written.push({ path: dest, status: 'kept' })
     await mkdir(dirname(target), { recursive: true })
@@ -42,24 +63,21 @@ export async function scaffold(a: Answers): Promise<Written[]> {
     written.push({ path: dest, status: 'created' })
   }
 
-  const templateDir = join(packageRoot, 'template')
-  for await (const file of walk(templateDir)) {
-    const rel = relative(templateDir, file)
-    const name = renames[rel.split('/').pop() ?? ''] ?? null
-    await place(file, name ? join(dirname(rel), name) : rel)
+  await mkdir(a.dir, { recursive: true })
+
+  if (a.parts.includes('docs')) {
+    for (const file of await templateFiles()) await place(file)
+    if (!existsSync(join(a.dir, 'CLAUDE.md'))) {
+      await symlink('AGENTS.md', join(a.dir, 'CLAUDE.md'))
+      written.push({ path: 'CLAUDE.md → AGENTS.md', status: 'linked' })
+    }
   }
 
-  const stackDir = join(packageRoot, 'stacks', a.stack)
-  await place(join(stackDir, 'mise.toml'), 'mise.toml')
-  await place(join(stackDir, 'README.md'), 'docs/stack.md')
-  await place(join(packageRoot, 'stacks', 'auth.md'), 'docs/auth.md')
-
-  if (!existsSync(join(a.dir, 'CLAUDE.md'))) {
-    await symlink('AGENTS.md', join(a.dir, 'CLAUDE.md'))
-    written.push({ path: 'CLAUDE.md → AGENTS.md', status: 'linked' })
+  if (a.parts.includes('stack') && a.stack) {
+    for (const file of stackFiles(a.stack.stack)) await place(file)
   }
 
-  if (a.git && !existsSync(join(a.dir, '.git'))) {
+  if (a.parts.includes('git') && !existsSync(join(a.dir, '.git'))) {
     execFileSync('git', ['init', '-q'], { cwd: a.dir })
   }
 

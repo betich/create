@@ -37,6 +37,14 @@ export const skillSets = {
   style: { label: 'betich/style (kickoff, domain-experts, thai-ux-copy)', source: 'betich/style' },
 } as const
 
+export const parts = {
+  docs: 'Agent docs: AGENTS.md, CLAUDE.md, docs/, editor config',
+  stack: 'Stack preset: mise.toml, docs/stack.md, docs/auth.md',
+  skills: 'Skills',
+  git: 'git init',
+} as const
+
+export type Part = keyof typeof parts
 export type Stack = keyof typeof stacks
 export type PackageManager = keyof typeof packageManagers
 export type Backend = keyof typeof backends
@@ -45,20 +53,30 @@ export type Workflow = keyof typeof workflows
 export type Language = keyof typeof languages
 export type SkillSet = keyof typeof skillSets
 
-export interface Answers {
-  dir: string
-  name: string
+export interface StackChoice {
+  stack: Stack
+  pm: PackageManager
+}
+
+export interface Brief {
   oneLiner: string
   users: string
   job: string
   domains: string[]
   workflow: Workflow
-  stack: Stack
-  pm: PackageManager
   backend: Backend
   auth: Auth[]
   language: Language
   voice: string
+}
+
+export interface Answers {
+  dir: string
+  name: string
+  parts: Part[]
+  // Asked when the docs or the stack preset are written.
+  stack?: StackChoice
+  // Asked when the docs are written.
+  brief?: Brief
   skills: SkillSet[]
-  git: boolean
 }

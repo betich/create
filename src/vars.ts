@@ -13,21 +13,26 @@ const voiceHint = {
   en: 'English only. The `thai-ux-copy` rules on CTAs, status and errors still apply.',
 } as const
 
-export function toVars(a: Answers, stackSummary: string): Vars {
-  return {
-    NAME: a.name,
-    ONE_LINER: a.oneLiner,
-    USERS: a.users,
-    JOB: a.job,
-    DOMAINS: a.domains.length ? a.domains.map((d) => `- ${d}`).join('\n') : '_Not clear yet. `/kickoff` asks._',
-    STACK: a.stack,
-    STACK_SUMMARY: stackSummary,
-    PM: a.pm,
-    BACKEND: backends[a.backend],
-    AUTH: a.auth.map((x) => auths[x]).join(', ') || auths.undecided,
-    WORKFLOW: workflowText[a.workflow],
-    WORKFLOW_SHORT: a.workflow,
-    LANGUAGES: `${languages[a.language]}. ${voiceHint[a.language]}`,
-    VOICE: a.voice,
+// Only the keys the chosen parts can fill. `render` throws if a template needs one that's missing.
+export function toVars(a: Answers, stackSummary: string | undefined): Vars {
+  const vars: Vars = { NAME: a.name }
+  if (a.stack) {
+    Object.assign(vars, { STACK: a.stack.stack, STACK_SUMMARY: stackSummary ?? '', PM: a.stack.pm })
   }
+  const b = a.brief
+  if (b) {
+    Object.assign(vars, {
+      ONE_LINER: b.oneLiner,
+      USERS: b.users,
+      JOB: b.job,
+      DOMAINS: b.domains.length ? b.domains.map((d) => `- ${d}`).join('\n') : '_Not clear yet. `/kickoff` asks._',
+      BACKEND: backends[b.backend],
+      AUTH: b.auth.map((x) => auths[x]).join(', ') || auths.undecided,
+      WORKFLOW: workflowText[b.workflow],
+      WORKFLOW_SHORT: b.workflow,
+      LANGUAGES: `${languages[b.language]}. ${voiceHint[b.language]}`,
+      VOICE: b.voice,
+    })
+  }
+  return vars
 }

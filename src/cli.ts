@@ -22,7 +22,9 @@ p.intro('@betichh/create')
 const answers = await interview(process.argv[2])
 
 const written = await scaffold(answers)
-p.note(written.map((w) => `${w.status.padEnd(7)} ${w.path}`).join('\n'), relative(process.cwd(), answers.dir) || '.')
+if (written.length) {
+  p.note(written.map((w) => `${w.status.padEnd(7)} ${w.path}`).join('\n'), relative(process.cwd(), answers.dir) || '.')
+}
 
 if (answers.skills.length) {
   const failed = await installSkills(answers.dir, answers.skills)

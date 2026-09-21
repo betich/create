@@ -22,6 +22,10 @@ The command runs a short interview in the terminal, writes the project docs from
 
 The answers go into `docs/brief.md`. The template in [`template/`](template/) is filled in and copied, and `CLAUDE.md` is created as a symlink to `AGENTS.md`. The stack preset from [`stacks/`](stacks/) goes into `mise.toml` and `docs/stack.md`. Existing files are never overwritten, so the command is safe to run on a project that already exists.
 
+## In an existing project
+
+When the folder already has files, the interview starts with a checklist: agent docs, stack preset, skills and `git init`. Each item shows whether it's already there, and whatever is missing is checked by default. It only asks the questions the checked items need. For example, the stack preset alone just asks for the stack. Installed skill sets are read from `skills-lock.json` and left unchecked.
+
 ## The kickoff prompt
 
 The kickoff prompt is built from the brief and starts `/kickoff`, which runs the steps that need a conversation:
