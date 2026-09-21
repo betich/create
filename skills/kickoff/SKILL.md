@@ -1,6 +1,6 @@
 ---
 name: kickoff
-description: Take a freshly scaffolded project (from create-betich) from idea to first running screen — product context, domain docs, stack scaffold, domain expert agents, first design. Use when the user says kickoff, start the project, set up this new project, or when a create-betich kickoff prompt arrives.
+description: Take a freshly scaffolded project (from @betichh/create) from idea to first running screen — product context, domain docs, stack scaffold, domain expert agents, first design. Use when the user says kickoff, start the project, set up this new project, or when an @betichh/create kickoff prompt arrives.
 disable-model-invocation: true
 ---
 

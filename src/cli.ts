@@ -18,7 +18,7 @@ function copy(text: string): boolean {
   return clipboards.some(([cmd, args]) => spawnSync(cmd, args, { input: text }).status === 0)
 }
 
-p.intro('create-betich')
+p.intro('@betichh/create')
 const answers = await interview(process.argv[2])
 
 const written = await scaffold(answers)

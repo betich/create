@@ -1,9 +1,11 @@
 # style
 
-My defaults for building projects with coding agents, kept in one repo. They're opinionated on purpose. The repo is published to npm as `create-betich`.
+[![npm](https://img.shields.io/npm/v/@betichh/create)](https://www.npmjs.com/package/@betichh/create)
+
+My defaults for building projects with coding agents, kept in one repo. They're opinionated on purpose. The repo is published to npm as [`@betichh/create`](https://www.npmjs.com/package/@betichh/create).
 
 ```sh
-npm create betich@latest my-app     # or: bunx create-betich my-app / pnpm create betich my-app
+npm create @betichh@latest my-app     # or: bunx @betichh/create my-app / pnpm create @betichh my-app
 ```
 
 The command runs a short interview in the terminal, writes the project docs from your answers, installs the skills, and ends with a kickoff prompt that you can launch straight into `claude`.
@@ -48,5 +50,6 @@ To test unpublished skill changes, set `STYLE_SOURCE=/path/to/style` and the sca
 pnpm install
 pnpm test                 # build and scaffold every stack into a temp dir
 pnpm dev ../scratch-app   # run the interview for real
-npm publish               # prepublishOnly runs the tests
+npm version patch         # bump before every release
+npm publish --otp=<code>  # prepublishOnly runs the tests
 ```

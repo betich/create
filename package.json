@@ -1,10 +1,10 @@
 {
-  "name": "create-betich",
+  "name": "@betichh/create",
   "version": "0.1.0",
   "description": "Interview-driven project scaffold: agent docs, stack preset, skills, and a kickoff prompt.",
   "type": "module",
   "bin": {
-    "create-betich": "dist/cli.js"
+    "create": "dist/cli.js"
   },
   "files": [
     "dist",
@@ -23,7 +23,10 @@
   "engines": {
     "node": ">=20"
   },
-  "repository": "github:betich/style",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/betich/style.git"
+  },
   "license": "MIT",
   "dependencies": {
     "@clack/prompts": "^0.11.0"
@@ -32,5 +35,8 @@
     "@types/node": "^24.0.0",
     "typescript": "^5.9.0"
   },
-  "packageManager": "pnpm@10.18.0"
+  "packageManager": "pnpm@10.18.0",
+  "publishConfig": {
+    "access": "public"
+  }
 }
