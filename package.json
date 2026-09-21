@@ -1,6 +1,6 @@
 {
   "name": "@betichh/create",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Interview-driven project scaffold: agent docs, stack preset, skills, and a kickoff prompt.",
   "type": "module",
   "bin": {
