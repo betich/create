@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+.dev.vars
+.wrangler/
+pb_data/
+bin/
+*.db
+*.db-*
+.DS_Store
+.claude/settings.local.json
+.claude/worktrees/
+.scratch/

@@ -1,47 +1,52 @@
 # style
 
-My defaults for building projects with coding agents, kept in one repo. They're opinionated on purpose.
-
-- **`template/`** holds what every new project starts with: `AGENTS.md`, coding style, design and copy rules, Claude settings and an ADR folder.
-- **`skills/`** holds my own skills. They install with `npx skills add betich/style`.
-- **`stacks/`** holds the stack presets and when to pick each one.
-- **`bin/new`** starts a new project from all of the above.
-
-## Start a project
+My defaults for building projects with coding agents, kept in one repo. They're opinionated on purpose. The repo is published to npm as `create-betich`.
 
 ```sh
-~/code/style/bin/new ~/code/my-app --stack elysia --pm bun
-cd ~/code/my-app && claude
-> /kickoff
+npm create betich@latest my-app     # or: bunx create-betich my-app / pnpm create betich my-app
 ```
 
-`bin/new` copies `template/`, fills in the project name, stack and package manager, runs `git init`, and installs the skill set into the project so the skills are pinned in `skills-lock.json`. `/kickoff` then runs the steps that need a conversation, in order:
+The command runs a short interview in the terminal, writes the project docs from your answers, installs the skills, and ends with a kickoff prompt that you can launch straight into `claude`.
 
-1. `setup-matt-pocock-skills`: sets the issue tracker, triage labels and domain docs.
-2. `grill-with-docs`: turns the idea into `CONTEXT.md` and the first ADRs.
-3. `impeccable init`: writes `PRODUCT.md` (users, register, brand, anti-references).
-4. Scaffolds the chosen stack with its official generator, then shapes it to `docs/coding-style.md`.
-5. `domain-experts`: writes one `.claude/agents/<domain>-expert.md` for each product domain once the domains are clear.
-6. `impeccable` new work: produces the first surface and `DESIGN.md`.
+## What the interview asks
 
-## Apply to an existing project
+- **The product:** what it is in one line, who uses it, the job it does for them, and any domains you already see.
+- **Workflow:** issue-driven (GitHub Issues) or spec-driven (`SPEC.md` with spec ids).
+- **Stack:** `elysia` (the default), `cloudflare` or `pocketbase`, plus the package manager, backend structure and auth.
+- **Voice:** the languages (Thai first with an English toggle, Thai only, or English only) and the brand personality.
+- **Setup:** which skill sets to install, and whether to run `git init`.
+
+## What it writes
+
+The answers go into `docs/brief.md`. The template in [`template/`](template/) is filled in and copied, and `CLAUDE.md` is created as a symlink to `AGENTS.md`. The stack preset from [`stacks/`](stacks/) goes into `mise.toml` and `docs/stack.md`. Existing files are never overwritten, so the command is safe to run on a project that already exists.
+
+## The kickoff prompt
+
+The kickoff prompt is built from the brief and starts `/kickoff`, which runs the steps that need a conversation:
+
+1. `setup-matt-pocock-skills`
+2. `grill-with-docs`, which writes `CONTEXT.md` and the ADRs. It doesn't re-ask anything that's already in the brief.
+3. `impeccable init`, which writes `PRODUCT.md`
+4. Scaffolding the stack with its official generators, then reshaping it to fit `docs/coding-style.md`
+5. `domain-experts`, which writes one `.claude/agents/<domain>-expert.md` per domain
+6. The first surface: make it work, then lay it out, then make it bolder with `impeccable`
+
+## Skill sets
+
+| Source | For |
+|---|---|
+| `mattpocock/skills` | grilling, domain modelling, to-spec, to-tickets, tdd, code review |
+| `pbakaus/impeccable` | design: init, new work, critique, polish |
+| `chakrit/kien-thai` | natural Thai prose |
+| `betich/style` ([`skills/`](skills/)) | kickoff, domain-experts, thai-ux-copy |
+
+To test unpublished skill changes, set `STYLE_SOURCE=/path/to/style` and the scaffold installs this repo's skills from that path instead of GitHub.
+
+## Developing
 
 ```sh
-~/code/style/bin/new . --stack pocketbase   # never overwrites an existing file
+pnpm install
+pnpm test                 # build and scaffold every stack into a temp dir
+pnpm dev ../scratch-app   # run the interview for real
+npm publish               # prepublishOnly runs the tests
 ```
-
-## Skill set
-
-| Source | Skills | For |
-|---|---|---|
-| `mattpocock/skills` | grilling, domain-modeling, to-spec, to-tickets, tdd, code-review, … | the engineering loop, ADRs and `CONTEXT.md` |
-| `pbakaus/impeccable` | impeccable | design: init, new work, critique, polish |
-| `chakrit/kien-thai` | kien-thai, kode-thai | natural Thai prose: docs, landing copy, translation |
-| `betich/style` | kickoff, domain-experts, thai-ux-copy | this repo: project setup, domain experts, Thai UI strings |
-
-Stacks: [`stacks/README.md`](stacks/README.md).
-
-## Other ways to distribute this
-
-- **GitHub template repo.** Mark `template/` as its own repo and use "Use this template". It's simpler, but you lose `--stack` and can't apply it to an existing project.
-- **Claude Code plugin marketplace.** Add `.claude-plugin/marketplace.json` so the skills and agents install with `/plugin install`. This is worth doing if the skills should be available globally instead of pinned per project.

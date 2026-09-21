@@ -1,0 +1,24 @@
+[tools]
+bun = "latest"
+node = "24"
+
+[tasks.setup]
+run = ["bun install", "cp -n .env.example .env || true"]
+
+[tasks.dev]
+run = "bun run dev"
+
+[tasks.check]
+run = ["bun run lint", "bun run typecheck", "bun run test"]
+
+[tasks.build]
+run = "bun run build"
+
+[tasks.db-generate]
+run = "bun run --cwd apps/api drizzle-kit generate"
+
+[tasks.db-migrate]
+run = "bun run --cwd apps/api drizzle-kit migrate"
+
+[tasks.up]
+run = "docker compose up -d --build"

@@ -1,0 +1,17 @@
+[tools]
+node = "24"
+
+[tasks.setup]
+run = ["{{PM}} install", "cp -n apps/api/.dev.vars.example apps/api/.dev.vars || true", "{{PM}} run --dir apps/api db:migrate:local"]
+
+[tasks.dev]
+run = "{{PM}} run dev"
+
+[tasks.check]
+run = ["{{PM}} run lint", "{{PM}} run typecheck", "{{PM}} run test"]
+
+[tasks.build]
+run = "{{PM}} run build"
+
+[tasks.types]
+run = "{{PM}} exec --dir apps/api wrangler types"

@@ -1,0 +1,36 @@
+{
+  "name": "create-betich",
+  "version": "0.1.0",
+  "description": "Interview-driven project scaffold: agent docs, stack preset, skills, and a kickoff prompt.",
+  "type": "module",
+  "bin": {
+    "create-betich": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.js",
+    "template",
+    "stacks",
+    "skills"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc && node dist/cli.js",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc && node --test dist/**/*.test.js",
+    "prepublishOnly": "pnpm run test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": "github:betich/style",
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^0.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  },
+  "packageManager": "pnpm@10.18.0"
+}

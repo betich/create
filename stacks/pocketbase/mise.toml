@@ -1,0 +1,18 @@
+[tools]
+go = "latest"
+node = "24"
+
+[tasks.setup]
+run = ["{{PM}} install --dir frontend", "cd server && go mod download", "cp -n server/.env.example server/.env || true"]
+
+[tasks.dev]
+run = "trap 'kill 0' INT TERM EXIT; (cd server && go run . serve --http=127.0.0.1:8090) & {{PM}} --dir frontend run dev & wait"
+
+[tasks.check]
+run = ["cd server && go vet ./... && go test ./...", "{{PM}} --dir frontend run lint", "{{PM}} --dir frontend run typecheck", "{{PM}} --dir frontend run test"]
+
+[tasks.build]
+run = ["{{PM}} --dir frontend run build", "cd server && go build -tags production -o ../bin/app ."]
+
+[tasks.typegen]
+run = "{{PM}} --dir frontend exec pocketbase-typegen --db server/pb_data/data.db --out frontend/src/lib/pocketbase-types.ts"
