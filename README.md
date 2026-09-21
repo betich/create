@@ -24,7 +24,21 @@ The answers go into `docs/brief.md`. The template in [`template/`](template/) is
 
 ## In an existing project
 
-When the folder already has files, the interview starts with a checklist: agent docs, stack preset, skills and `git init`. Each item shows whether it's already there, and whatever is missing is checked by default. It only asks the questions the checked items need. For example, the stack preset alone just asks for the stack. Installed skill sets are read from `skills-lock.json` and left unchecked.
+Run the command from the project root and pass `.` as the folder:
+
+```sh
+cd my-existing-app
+npm create @betichh@latest .     # or: bunx @betichh/create . / pnpm create @betichh .
+```
+
+When the folder already has files, the interview starts with a checklist instead of going straight to the questions:
+
+1. **Pick what to add.** The checklist offers agent docs, the stack preset, skills and `git init`. Each item is marked as already there, partly there or missing, and the missing ones are checked by default. Use space to toggle an item and enter to confirm.
+2. **Answer only what's needed.** Agent docs run the full interview. The stack preset on its own asks only for the stack and the package manager. Skills shows the skill sets, with the ones already listed in `skills-lock.json` marked as installed and left unchecked.
+3. **Review what was written.** Each file is listed as `created`, `kept` or `linked`. Files that already existed are always kept, so a partly scaffolded project only gets the files it's missing.
+4. **Start `/kickoff`.** If you skipped the agent docs, the kickoff prompt tells `claude` to read the existing `AGENTS.md`, `docs/` and code first, and to skip every step whose output is already there.
+
+To replace a file with the template's version, delete it and run the command again.
 
 ## The kickoff prompt
 
